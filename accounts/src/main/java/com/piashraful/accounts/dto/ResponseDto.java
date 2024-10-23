@@ -22,4 +22,6 @@ public class ResponseDto {
     )
     private String statusMsg;
 
+
+
 }

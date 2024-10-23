@@ -38,4 +38,6 @@ public class CustomerDto {
             description = "Account details of the Customer"
     )
     private AccountsDto accountsDto;
+
+
 }
