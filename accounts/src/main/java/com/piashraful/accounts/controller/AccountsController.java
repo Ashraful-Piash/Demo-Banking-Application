@@ -5,6 +5,7 @@ import com.piashraful.accounts.dto.CustomerDto;
 import com.piashraful.accounts.dto.ResponseDto;
 import com.piashraful.accounts.service.IAccountsService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@AllArgsConstructor
 public class AccountsController {
 
     private IAccountsService iAccountsService;
