@@ -1,10 +1,13 @@
 package com.piashraful.accounts.service.impl;
 
 import com.piashraful.accounts.constants.AccountsConstants;
+import com.piashraful.accounts.dto.AccountsDto;
 import com.piashraful.accounts.dto.CustomerDto;
 import com.piashraful.accounts.entity.Accounts;
 import com.piashraful.accounts.entity.Customer;
 import com.piashraful.accounts.exception.CustomerAlreadyExistsException;
+import com.piashraful.accounts.exception.ResourceNotFoundException;
+import com.piashraful.accounts.mapper.AccountsMapper;
 import com.piashraful.accounts.mapper.CustomerMapper;
 import com.piashraful.accounts.repository.AccountsRepository;
 import com.piashraful.accounts.repository.CustomerRepository;
@@ -32,13 +35,13 @@ public class AccountsServiceImpl implements IAccountsService {
             throw new CustomerAlreadyExistsException("Customer already registered with given mobile number "
                     + customerDto.getMobileNumber());
         }
-        customer.setCreatedAt(LocalDateTime.now());
-        customer.setCreatedBy("Admin");
         Customer savedCustomer = customerRepository.save(customer);
 
         accountsRepository.save(createNewAccount(savedCustomer));
 
     }
+
+
 
     private Accounts createNewAccount(Customer customer) {
         Accounts newAccount = new Accounts();
@@ -47,9 +50,53 @@ public class AccountsServiceImpl implements IAccountsService {
         newAccount.setBranchAddress(AccountsConstants.ADDRESS);
         long randomAccountNumber = 1000000000L + new Random().nextInt(900000000);
         newAccount.setAccountNumber(randomAccountNumber);
-        newAccount.setCreatedAt(LocalDateTime.now());
-        newAccount.setCreatedBy("Admin");
         return newAccount;
     }
+
+    @Override
+    public CustomerDto fetchAccount(String mobileNumber) {
+        Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber)
+        );
+        Accounts accounts = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
+                () -> new ResourceNotFoundException("Account", "customerId", customer.getCustomerId().toString())
+        );
+        CustomerDto customerDto = CustomerMapper.mapToCustomerDto(customer, new CustomerDto());
+        customerDto.setAccountsDto(AccountsMapper.mapToAccountsDto(accounts, new AccountsDto()));
+        return customerDto;
+    }
+
+    @Override
+    public boolean updateAccount(CustomerDto customerDto) {
+        boolean isUpdated = false;
+        AccountsDto accountsDto = customerDto.getAccountsDto();
+        if(accountsDto !=null ){
+            Accounts accounts = accountsRepository.findById(accountsDto.getAccountNumber()).orElseThrow(
+                    () -> new ResourceNotFoundException("Account", "AccountNumber", accountsDto.getAccountNumber().toString())
+            );
+            AccountsMapper.mapToAccounts(accountsDto, accounts);
+            accounts = accountsRepository.save(accounts);
+
+            Long customerId = accounts.getCustomerId();
+            Customer customer = customerRepository.findById(customerId).orElseThrow(
+                    () -> new ResourceNotFoundException("Customer", "CustomerID", customerId.toString())
+            );
+            CustomerMapper.mapToCustomer(customerDto,customer);
+            customerRepository.save(customer);
+            isUpdated = true;
+        }
+        return  isUpdated;
+    }
+
+    @Override
+    public boolean deleteAccount(String mobileNumber) {
+        Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber)
+        );
+        accountsRepository.deleteByCustomerId(customer.getCustomerId());
+        customerRepository.deleteById(customer.getCustomerId());
+        return true;
+    }
+
 
 }
