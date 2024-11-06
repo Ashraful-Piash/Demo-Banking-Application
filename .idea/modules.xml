@@ -5,6 +5,8 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/Demo Banking Application.iml" filepath="$PROJECT_DIR$/.idea/Demo Banking Application.iml" />
       <module fileurl="file://$PROJECT_DIR$/accounts/accounts.iml" filepath="$PROJECT_DIR$/accounts/accounts.iml" />
       <module fileurl="file://$PROJECT_DIR$/cards/cards/cards.iml" filepath="$PROJECT_DIR$/cards/cards/cards.iml" />
+      <module fileurl="file://$PROJECT_DIR$/configserver/configserver/configserver.iml" filepath="$PROJECT_DIR$/configserver/configserver/configserver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eurekaserver/eurekaserver/eurekaserver.iml" filepath="$PROJECT_DIR$/eurekaserver/eurekaserver/eurekaserver.iml" />
       <module fileurl="file://$PROJECT_DIR$/loans/loans/loans.iml" filepath="$PROJECT_DIR$/loans/loans/loans.iml" />
     </modules>
   </component>
